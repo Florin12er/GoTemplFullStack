@@ -1,5 +1,5 @@
 # 1. Initialize the project with gin ,TEMPL, tailwind and HTMX. [COMPLETED]
-# 2. Create and Connect to the database [SEMI] 
+# 2. Create and Connect to the database [COMPLETED] 
 # 3. Create the user model with the messages as well
 # 4. Create the controllers: getAllUsers , GetUser, DeleteUser, EditUser 
 # Message,DeleteMessage, EditMessage,GetMessages 

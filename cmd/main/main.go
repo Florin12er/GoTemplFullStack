@@ -1,6 +1,8 @@
 package main
 
 import (
+	"GoMessageApp/internal/Database"
+	"GoMessageApp/internal/auth"
 	"GoMessageApp/internal/controllers"
 	"GoMessageApp/internal/templates"
 	"context"
@@ -8,15 +10,33 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
+func init() {
+	// load the env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	database.ConnectToDb()
+	database.SyncDatabase()
+}
+
 func main() {
+	gin.SetMode(gin.ReleaseMode)
+
+	// initialize gin
 	r := gin.Default()
+
+	if err := r.SetTrustedProxies([]string{"127.0.0.1"}); err != nil {
+		panic(err)
+	}
 
 	// Serving static files
 	r.Static("/static", "./static")
 
-	// Define a route for the main page or component
+	//html rendering routes
 	r.GET("/", func(c *gin.Context) {
 		// Create the component
 		component := templates.Hello("John", "Berlin", "title")
@@ -26,12 +46,16 @@ func main() {
 			log.Printf("failed to render component: %v", err)
 			c.String(http.StatusInternalServerError, "Internal Server Error")
 		}
-    r.GET("/hello",controllers.HelloHandler)
 	})
+	// Authenticate user
+	r.POST("/register", auth.Register)
+	r.POST("/login", auth.Login)
 
-	// Start the Gin server and log any errors if it fails to start
-    if err := r.Run(":8080"); err != nil {
+	// function routes
+	r.GET("/hello", controllers.HelloHandler)
+
+	// Run the server on the specified port
+	if err := r.Run(); err != nil {
 		log.Fatalf("failed to run server: %v", err)
 	}
 }
-
