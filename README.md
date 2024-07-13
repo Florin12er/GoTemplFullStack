@@ -1,8 +1,8 @@
 # 1. Initialize the project with gin ,TEMPL, tailwind and HTMX. [COMPLETED]
 # 2. Create and Connect to the database [COMPLETED] 
-# 3. Create the user model with the messages as well
+# 3. Create the user model with the messages as well [COMPLETED]
 # 4. Create the controllers: getAllUsers , GetUser, DeleteUser, EditUser 
-# Message,DeleteMessage, EditMessage,GetMessages 
+# Message, DeleteMessage, EditMessage, GetMessages 
 # Login, Register, ResetPassword,Notify, GetAllNofication, RemoveNotfication, GetNotification 
 # 5. Make the routes for the controllers
 # 6. Test the routes with postman
