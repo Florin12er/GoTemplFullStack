@@ -35,7 +35,7 @@ func UploadProfilePicture(c *gin.Context) {
 
     // Generate a unique filename
     filename := fmt.Sprintf("%d_%s", userID, file.Filename)
-    filepath := filepath.Join("uploads", filename)
+    filepath := filepath.Join("uploads/users", filename)
 
     // Save the file
     if err := c.SaveUploadedFile(file, filepath); err != nil {
