@@ -53,7 +53,8 @@ func main() {
 	// Authenticate user
 	r.POST("/register", auth.Register)
 	r.POST("/login", auth.Login)
-	r.POST("/reset", auth.ResetPassword)
+    r.POST("/reset-request", auth.ResetRequest)
+	r.POST("/reset-password", auth.ResetPassword)
 	r.GET("/user", middleware.RequireAuth, auth.GetUser)
 	r.GET("/user/all", middleware.RequireAuth, auth.GetAllUsers)
 	r.GET("/user/:userID", middleware.RequireAuth, auth.GetUserByID)
@@ -64,8 +65,8 @@ func main() {
 	r.POST("/message", middleware.RequireAuth, message.SendMessage)
 	r.PUT("/message/:messageID", middleware.RequireAuth, message.EditMessage)
 	r.DELETE("/message/:messageID", middleware.RequireAuth, message.DeleteMessage)
-	r.GET("/conversations/user/:userID", middleware.RequireAuth, message.GetAllConversations)
-	r.GET("/conversation/:senderID/:receiverID", middleware.RequireAuth, message.GetConversation)
+	r.GET("/conversation/:receiverID", middleware.RequireAuth, message.GetConversation)
+	r.GET("/conversations", middleware.RequireAuth, message.GetAllConversations)
 
 	// Notification
 
@@ -77,7 +78,7 @@ func main() {
 	)
 
 	// Upload photos
-	r.POST("/user/:userID/profile-picture", middleware.RequireAuth, auth.UploadUserProfilePicture)
+	r.POST("/user/:userID/profile-picture", middleware.RequireAuth, auth.UploadProfilePicture)
 	r.POST("/user/profile-picture", middleware.RequireAuth, auth.EditProfilePicture)
 	r.DELETE("/user/profile-picture", middleware.RequireAuth, auth.DeleteProfilePicture)
 	r.POST("/messages/:messageID/picture", middleware.RequireAuth, message.UploadMessagePicture)

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"unicode"
 )
 
 // RegisterRequest is the struct used for binding and validation
@@ -16,13 +17,45 @@ type RegisterRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
+func isPasswordValid(password string) bool {
+	var (
+		hasUpper   bool
+		hasLower   bool
+		hasNumber  bool
+		hasSpecial bool
+	)
+
+	for _, char := range password {
+		switch {
+		case unicode.IsUpper(char):
+			hasUpper = true
+		case unicode.IsLower(char):
+			hasLower = true
+		case unicode.IsNumber(char):
+			hasNumber = true
+		case unicode.IsPunct(char) || unicode.IsSymbol(char):
+			hasSpecial = true
+		}
+	}
+
+	return len(password) >= 6 && hasUpper && hasLower && hasNumber && hasSpecial
+}
+
 func Register(c *gin.Context) {
 	var body RegisterRequest
 
-	// Bind and validate the JSON body
+	// Bind the JSON body
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "failed to read body or missing required fields",
+			"error": "Failed to read body or missing required fields",
+		})
+		return
+	}
+
+	// Validate password
+	if !isPasswordValid(body.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Password doesn't meet the requirements. It must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
 		})
 		return
 	}
@@ -31,7 +64,7 @@ func Register(c *gin.Context) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to hash password",
+			"error": "Failed to hash password",
 		})
 		return
 	}
@@ -47,13 +80,14 @@ func Register(c *gin.Context) {
 	// Insert the user record into the database
 	if err := database.DB.Create(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "failed to create user",
+			"error": "Failed to create user",
 		})
 		return
 	}
 
 	// Respond with a success message
 	c.JSON(http.StatusOK, gin.H{
-		"message": "user created successfully",
+		"message": "User created successfully",
 	})
 }
+

@@ -1,53 +1,81 @@
 package auth
 
 import (
-	"GoMessageApp/internal/Database"
-	"GoMessageApp/internal/models"
-	"GoMessageApp/internal/utils"
 	"net/http"
 
+	"GoMessageApp/internal/Database"
+	"GoMessageApp/internal/models"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
-// EditUserProfile updates the profile information of the logged-in user
+type EditUserRequest struct {
+	FullName    string `json:"fullName"`
+	Email       string `json:"email"`
+	UserName    string `json:"userName"`
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
+}
+
 func EditUserProfile(c *gin.Context) {
-	userID := utils.GetLoggedInUserID(
-		c,
-	) // Assume getLoggedInUserID is implemented as discussed earlier
-
-	var update struct {
-		UserName string `json:"username"`
-		FullName string `json:"fullname"`
-		Email    string `json:"email"`
-	}
-	if err := c.BindJSON(&update); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+	// Get the user from the context
+	userInterface, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
-	// Fetch the existing user record
-	var user models.User
-	if err := database.DB.First(&user, userID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+	user, ok := userInterface.(models.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user data"})
 		return
 	}
 
-	// Update fields if they are provided
-	if update.UserName != "" {
-		user.UserName = update.UserName
-	}
-	if update.FullName != "" {
-		user.FullName = update.FullName
-	}
-	if update.Email != "" {
-		user.Email = update.Email
+	// Parse the request body
+	var req EditUserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	// Save the updated user record
+	// Update fields if provided
+	if req.FullName != "" {
+		user.FullName = req.FullName
+	}
+	if req.Email != "" {
+		user.Email = req.Email
+	}
+	if req.UserName != "" {
+		user.UserName = req.UserName
+	}
+
+	// Handle password change
+	if req.OldPassword != "" && req.NewPassword != "" {
+		// Verify old password
+		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.OldPassword)); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid old password"})
+			return
+		}
+
+		// Hash new password
+		hashedPassword, err := bcrypt.GenerateFromPassword(
+			[]byte(req.NewPassword),
+			bcrypt.DefaultCost,
+		)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash new password"})
+			return
+		}
+		user.Password = string(hashedPassword)
+	}
+
+	// Save the updated user to the database
 	if err := database.DB.Save(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update user profile"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "user profile updated successfully"})
+	// Return the updated user (excluding the password)
+	user.Password = ""
+	c.JSON(http.StatusOK, gin.H{"message": "User profile updated successfully", "user": user})
 }
