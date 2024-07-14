@@ -4,7 +4,8 @@
 # 4. Create the controllers: getAllUsers , GetUser, DeleteUser, EditUser 
 # Message, DeleteMessage, EditMessage, GetMessages 
 # Login, Register, ResetPassword,Notify, GetAllNofication, RemoveNotfication, GetNotification 
-# 5. Make the routes for the controllers
+[COMPLETED]
+# 5. Make the routes for the controllers [COMPLETED]
 # 6. Test the routes with postman
 # 7. Make the Login, Register, Reset Pages
 # 8. Make a sidebar component where users can go to the source of the code and settings
