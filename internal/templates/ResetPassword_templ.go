@@ -8,7 +8,7 @@ package templates
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func ResetPassword() templ.Component {
+func ResetPasswordForm(errorMessage string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -26,7 +26,90 @@ func ResetPassword() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><title>Reset Password</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><script src=\"static/javascripts/htmx.min.js\"></script><link rel=\"stylesheet\" href=\"static/styles/style.css\"></head><body><form hx-post=\"/reset-password\" hx-target=\"#response-div\" hx-indicator=\"#loading\"><div class=\"text-center text-3xl\"><h1>Reset Password</h1></div><div><label for=\"email\">Email</label> <input id=\"email\" name=\"email\" type=\"email\" required> <label for=\"code\">Reset Code</label> <input id=\"code\" name=\"code\" type=\"number\" required> <label for=\"newPassword\">New Password</label> <input id=\"newPassword\" name=\"newPassword\" type=\"password\" required></div><div><button type=\"submit\">Reset Password </button></div><div id=\"loading\" class=\"htmx-indicator\">Loading...</div><div id=\"response-div\"></div></form></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"bg-gray-800 p-8 rounded-lg shadow-green-500 shadow-xl w-full max-w-md\"><form hx-post=\"/auth/reset-password\" hx-target=\"#response-div\" hx-swap=\"outerHTML\" hx-indicator=\"#loading\" class=\"space-y-6\"><div class=\"text-center\"><h1 class=\"text-3xl font-bold text-green-400\">Reset Password</h1></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if errorMessage != "" {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative\" role=\"alert\"><span class=\"block sm:inline\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var2 string
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/ResetPassword.templ`, Line: 11, Col: 64}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"space-y-4\"><div><label for=\"email\" class=\"block text-sm font-medium text-gray-300\">Email</label><div class=\"relative\"><input id=\"email\" placeholder=\"type your email\" name=\"email\" type=\"email\" required class=\"mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-green-500 pr-10\"><div class=\"absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none\"><i data-feather=\"mail\" class=\"h-5 w-5 text-gray-300\"></i></div></div></div><div><label for=\"code\" class=\"block text-sm font-medium text-gray-300\">Reset Code</label><div class=\"relative\"><input id=\"code\" placeholder=\"type the reset code\" name=\"code\" type=\"number\" required class=\"no-spinner mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-green-500 pr-10\"><div class=\"absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none\"><i data-feather=\"key\" class=\"h-5 w-5 text-gray-300\"></i></div></div></div><div><label for=\"newPassword\" class=\"block text-sm font-medium text-gray-300\">New Password</label><div class=\"relative\"><input id=\"newPassword\" name=\"newPassword\" placeholder=\"type your new password\" type=\"password\" required class=\"mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-green-500 pr-10\"> <button type=\"button\" id=\"togglePassword\" class=\"absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5\"><i data-feather=\"eye\" class=\"h-5 w-5 text-gray-300\"></i></button></div></div></div><div><button type=\"submit\" class=\"w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500\">Reset Password</button></div><div id=\"loading\" class=\"htmx-indicator text-center text-green-400\">Loading...</div><div id=\"response-div\"></div><div class=\"text-center\"><a href=\"/login\" class=\"text-sm text-green-400 hover:text-green-300\">Back to Login</a></div></form></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func ResetPasswordSuccess() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"bg-gray-800 p-8 w-full max-w-md\"><div class=\"text-center\"><h1 class=\"text-3xl font-bold text-green-400\">Password Reset Successful</h1></div><div class=\"mt-4 text-gray-300\">Your password has been successfully reset. You can now log in with your new password.</div><div class=\"mt-6 text-center\"><a href=\"/login\" class=\"text-green-400 hover:text-green-300\">Go to Login</a></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func ResetPassword() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><title>Reset Password - Messaging App</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><script src=\"static/javascripts/htmx.min.js\"></script><link rel=\"stylesheet\" href=\"static/styles/style.css\"><script src=\"https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js\"></script></head><body class=\"flex items-center justify-center min-h-screen bg-gray-200\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = ResetPasswordForm("").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n            // Initialize Feather Icons\n            feather.replace();\n\n            // Toggle password visibility\n            document.getElementById('togglePassword').addEventListener('click', function (e) {\n                const password = document.getElementById('newPassword');\n                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';\n                password.setAttribute('type', type);\n\n                // Toggle icon\n                const icon = this.querySelector('i');\n                if (type === 'password') {\n                    icon.setAttribute('data-feather', 'eye');\n                } else {\n                    icon.setAttribute('data-feather', 'eye-off');\n                }\n                feather.replace();\n            });\n        </script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

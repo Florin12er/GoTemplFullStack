@@ -53,41 +53,68 @@ func main() {
 			c.String(http.StatusInternalServerError, "Internal Sever Error")
 		}
 	})
+	r.GET("/register", func(c *gin.Context) {
+		component := templates.Register()
+
+		if err := component.Render(context.Background(), c.Writer); err != nil {
+			log.Printf("failded to render component: %v", err)
+			c.String(http.StatusInternalServerError, "Internal Sever Error")
+		}
+	})
+	r.GET("/reset-request", func(c *gin.Context) {
+		component := templates.ResetRequest()
+
+		if err := component.Render(context.Background(), c.Writer); err != nil {
+			log.Printf("failded to render component: %v", err)
+			c.String(http.StatusInternalServerError, "Internal Sever Error")
+		}
+	})
+	r.GET("/reset-password", func(c *gin.Context) {
+		component := templates.ResetPassword()
+
+		if err := component.Render(context.Background(), c.Writer); err != nil {
+			log.Printf("failded to render component: %v", err)
+			c.String(http.StatusInternalServerError, "Internal Sever Error")
+		}
+	})
+
 	// Authenticate user
-	r.POST("/register", auth.Register)
-	r.POST("/check-username", auth.CheckUsername)
-	r.POST("/check-password", auth.CheckPassword)
-	r.POST("/login", auth.Login)
-	r.POST("/logout", middleware.RequireAuth, auth.Logout)
-	r.POST("/reset-request", auth.ResetRequest)
-	r.POST("/reset-password", auth.ResetPassword)
-	r.GET("/user", middleware.RequireAuth, auth.GetUser)
-	r.GET("/user/all", middleware.RequireAuth, auth.GetAllUsers)
-	r.GET("/user/:userID", middleware.RequireAuth, auth.GetUserByID)
-	r.PUT("/user/profile", middleware.RequireAuth, auth.EditUserProfile)
-	r.DELETE("/user/profile", middleware.RequireAuth, auth.DeleteUserProfile)
+	r.POST("/auth/register", auth.Register)
+	r.POST("/auth/login", auth.Login)
+	r.POST("/auth/logout", middleware.RequireAuth, auth.Logout)
+	r.POST("/auth/reset-request", auth.ResetRequest)
+	r.POST("/auth/reset-password", auth.ResetPassword)
+	r.GET("/auth/user", middleware.RequireAuth, auth.GetUser)
+	r.GET("/auth/user/all", middleware.RequireAuth, auth.GetAllUsers)
+	r.GET("/auth/user/:userID", middleware.RequireAuth, auth.GetUserByID)
+	r.PUT("/auth/user/profile", middleware.RequireAuth, auth.EditUserProfile)
+	r.DELETE("/auth/user/profile", middleware.RequireAuth, auth.DeleteUserProfile)
 
 	// Messages
-	r.POST("/message", middleware.RequireAuth, message.SendMessage)
-	r.PUT("/message/:messageID", middleware.RequireAuth, message.EditMessage)
-	r.DELETE("/message/:messageID", middleware.RequireAuth, message.DeleteMessage)
-	r.GET("/conversation/:receiverID", middleware.RequireAuth, message.GetConversation)
-	r.GET("/conversations", middleware.RequireAuth, message.GetAllConversations)
+	r.POST("/auth/message", middleware.RequireAuth, message.SendMessage)
+	r.PUT("/auth/message/:messageID", middleware.RequireAuth, message.EditMessage)
+	r.DELETE("/auth/message/:messageID", middleware.RequireAuth, message.DeleteMessage)
+	r.GET("/auth/conversation/:receiverID", middleware.RequireAuth, message.GetConversation)
+	r.GET("/auth/conversations", middleware.RequireAuth, message.GetAllConversations)
 
 	// Notification
 
-	r.GET("/notification", middleware.RequireAuth, notification.GetNotifications)
+	r.GET("/auth/notification", middleware.RequireAuth, notification.GetNotifications)
 	r.DELETE(
-		"/notification/:notificationID",
+		"/auth/notification/:notificationID",
 		middleware.RequireAuth,
 		notification.RemoveNotification,
 	)
 
 	// Upload photos
-	r.POST("/user/:userID/profile-picture", middleware.RequireAuth, auth.UploadProfilePicture)
-	r.POST("/user/profile-picture", middleware.RequireAuth, auth.EditProfilePicture)
-	r.DELETE("/user/profile-picture", middleware.RequireAuth, auth.DeleteProfilePicture)
-	r.POST("/messages/:messageID/picture", middleware.RequireAuth, message.UploadMessagePicture)
+	r.POST("/auth/user/:userID/profile-picture", middleware.RequireAuth, auth.UploadProfilePicture)
+	r.POST("/auth/user/profile-picture", middleware.RequireAuth, auth.EditProfilePicture)
+	r.DELETE("/auth/user/profile-picture", middleware.RequireAuth, auth.DeleteProfilePicture)
+	r.POST(
+		"/auth/messages/:messageID/picture",
+		middleware.RequireAuth,
+		message.UploadMessagePicture,
+	)
 
 	// function routes
 	r.GET("/hello", controllers.HelloHandler)

@@ -3,21 +3,20 @@ package auth
 import (
 	"GoMessageApp/internal/Database"
 	"GoMessageApp/internal/models"
+    "GoMessageApp/internal/templates"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"unicode"
+    "context"
 )
 
-// RegisterRequest is the struct used for binding and validation
-type RegisterRequest struct {
-	Username string `json:"username" binding:"required"`
-	Fullname string `json:"fullname" binding:"required"`
-	Email    string `json:"email"    binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
-
+// check if the password is valid
 func isPasswordValid(password string) bool {
+	if len(password) < 6 {
+		return false
+	}
+
 	var (
 		hasUpper   bool
 		hasLower   bool
@@ -38,35 +37,36 @@ func isPasswordValid(password string) bool {
 		}
 	}
 
-	return len(password) >= 6 && hasUpper && hasLower && hasNumber && hasSpecial
+	return hasUpper && hasLower && hasNumber && hasSpecial
+}
+
+// RegisterRequest is the struct used for binding and validation
+type RegisterRequest struct {
+	Username string `form:"username" binding:"required"`
+	Fullname string `form:"fullname" binding:"required"`
+	Email    string `form:"email"    binding:"required,email"`
+	Password string `form:"password" binding:"required,min=6"`
 }
 
 func Register(c *gin.Context) {
     var body RegisterRequest
 
-    // Bind the form data
-    if err := c.ShouldBind(&body); err != nil {
-        c.HTML(http.StatusBadRequest, "", "Failed to read form data or missing required fields")
-        return
-    }
-
-    // Check if username is already taken
-    var existingUser models.User
-    if err := database.DB.Where("user_name = ?", body.Username).First(&existingUser).Error; err == nil {
-        c.HTML(http.StatusBadRequest, "", "Username is already taken")
+    // Bind form data instead of JSON
+    if err := c.Bind(&body); err != nil {
+        templates.RegisterForm("Failed to read form data or missing required fields").Render(context.Background(), c.Writer)
         return
     }
 
     // Validate password
     if !isPasswordValid(body.Password) {
-        c.HTML(http.StatusBadRequest, "", "Password doesn't meet the requirements. It must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.")
+        templates.RegisterForm("Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character").Render(context.Background(), c.Writer)
         return
     }
 
     // Generate a hash of the password
     hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
     if err != nil {
-        c.HTML(http.StatusInternalServerError, "", "Failed to hash password")
+        templates.RegisterForm("Failed to process password").Render(context.Background(), c.Writer)
         return
     }
 
@@ -80,31 +80,11 @@ func Register(c *gin.Context) {
 
     // Insert the user record into the database
     if err := database.DB.Create(&user).Error; err != nil {
-        c.HTML(http.StatusInternalServerError, "", "Failed to create user")
+        templates.RegisterForm("Failed to create user. Email or username may already be in use.").Render(context.Background(), c.Writer)
         return
     }
 
     // Respond with a success message
-    c.HTML(http.StatusOK, "", "<p>User created successfully! <a href='/login'>Login here</a></p>")
+    c.Header("HX-Redirect", "/login")
+    c.String(http.StatusOK, "")
 }
-func CheckUsername(c *gin.Context) {
-    username := c.PostForm("username")
-    
-    var existingUser models.User
-    if err := database.DB.Where("user_name = ?", username).First(&existingUser).Error; err == nil {
-        c.HTML(http.StatusOK, "", "Username is already taken")
-    } else {
-        c.HTML(http.StatusOK, "", "")
-    }
-}
-
-func CheckPassword(c *gin.Context) {
-    password := c.PostForm("password")
-    
-    if !isPasswordValid(password) {
-        c.HTML(http.StatusOK, "", "Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.")
-    } else {
-        c.HTML(http.StatusOK, "", "")
-    }
-}
-

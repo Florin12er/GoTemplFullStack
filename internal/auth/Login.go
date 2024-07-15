@@ -1,14 +1,16 @@
 package auth
 
 import (
-    "github.com/gin-gonic/gin"
-    "net/http"
-    "GoMessageApp/internal/models"
-    "GoMessageApp/internal/Database"
-    "golang.org/x/crypto/bcrypt"
-    "github.com/golang-jwt/jwt/v4"
-    "os"
-    "time"
+	"GoMessageApp/internal/Database"
+	"GoMessageApp/internal/models"
+	"GoMessageApp/internal/templates"
+	"context"
+	"net/http"
+	"os"
+	"time"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(c *gin.Context) {
@@ -17,23 +19,23 @@ func Login(c *gin.Context) {
         Password string `form:"password"`
     }
     if err := c.Bind(&body); err != nil {
-        c.HTML(http.StatusBadRequest, "", "Failed to read form data")
+        templates.Error("Failed to read body").Render(context.Background(), c.Writer)
         return
     }
 
     var user models.User
     if err := database.DB.First(&user, "email = ?", body.Email).Error; err != nil {
-        c.HTML(http.StatusBadRequest, "", "Invalid email or password")
+        templates.Error("Invalid email or password").Render(context.Background(), c.Writer)
         return
     }
 
     if user.ID == 0 {
-        c.HTML(http.StatusBadRequest, "", "Invalid email or password")
+        templates.Error("Invalid email or password").Render(context.Background(), c.Writer)
         return
     }
 
     if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-        c.HTML(http.StatusBadRequest, "", "Invalid email or password")
+        templates.Error("Invalid email or password").Render(context.Background(), c.Writer)
         return
     }
 
@@ -43,13 +45,14 @@ func Login(c *gin.Context) {
     })
     tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
     if err != nil {
-        c.HTML(http.StatusInternalServerError, "", "Failed to create token")
+        templates.Error("Failed to create token").Render(context.Background(), c.Writer)
         return
     }
 
     c.SetSameSite(http.SameSiteLaxMode)
     c.SetCookie("Authorization", tokenString, 3600, "", "", false, true)
 
-    c.HTML(http.StatusOK, "", "<p>Login successful! Redirecting...</p><script>setTimeout(function(){ window.location.href = '/'; }, 2000);</script>")
+    c.Header("HX-Redirect", "/")
+    c.String(http.StatusOK, "")
 }
 
