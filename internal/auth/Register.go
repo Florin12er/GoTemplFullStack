@@ -42,52 +42,69 @@ func isPasswordValid(password string) bool {
 }
 
 func Register(c *gin.Context) {
-	var body RegisterRequest
+    var body RegisterRequest
 
-	// Bind the JSON body
-	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to read body or missing required fields",
-		})
-		return
-	}
+    // Bind the form data
+    if err := c.ShouldBind(&body); err != nil {
+        c.HTML(http.StatusBadRequest, "", "Failed to read form data or missing required fields")
+        return
+    }
 
-	// Validate password
-	if !isPasswordValid(body.Password) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Password doesn't meet the requirements. It must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
-		})
-		return
-	}
+    // Check if username is already taken
+    var existingUser models.User
+    if err := database.DB.Where("user_name = ?", body.Username).First(&existingUser).Error; err == nil {
+        c.HTML(http.StatusBadRequest, "", "Username is already taken")
+        return
+    }
 
-	// Generate a hash of the password
-	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to hash password",
-		})
-		return
-	}
+    // Validate password
+    if !isPasswordValid(body.Password) {
+        c.HTML(http.StatusBadRequest, "", "Password doesn't meet the requirements. It must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.")
+        return
+    }
 
-	// Create a new user instance
-	user := models.User{
-		UserName: body.Username,
-		FullName: body.Fullname,
-		Email:    body.Email,
-		Password: string(hash),
-	}
+    // Generate a hash of the password
+    hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
+    if err != nil {
+        c.HTML(http.StatusInternalServerError, "", "Failed to hash password")
+        return
+    }
 
-	// Insert the user record into the database
-	if err := database.DB.Create(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to create user",
-		})
-		return
-	}
+    // Create a new user instance
+    user := models.User{
+        UserName: body.Username,
+        FullName: body.Fullname,
+        Email:    body.Email,
+        Password: string(hash),
+    }
 
-	// Respond with a success message
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User created successfully",
-	})
+    // Insert the user record into the database
+    if err := database.DB.Create(&user).Error; err != nil {
+        c.HTML(http.StatusInternalServerError, "", "Failed to create user")
+        return
+    }
+
+    // Respond with a success message
+    c.HTML(http.StatusOK, "", "<p>User created successfully! <a href='/login'>Login here</a></p>")
+}
+func CheckUsername(c *gin.Context) {
+    username := c.PostForm("username")
+    
+    var existingUser models.User
+    if err := database.DB.Where("user_name = ?", username).First(&existingUser).Error; err == nil {
+        c.HTML(http.StatusOK, "", "Username is already taken")
+    } else {
+        c.HTML(http.StatusOK, "", "")
+    }
+}
+
+func CheckPassword(c *gin.Context) {
+    password := c.PostForm("password")
+    
+    if !isPasswordValid(password) {
+        c.HTML(http.StatusOK, "", "Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.")
+    } else {
+        c.HTML(http.StatusOK, "", "")
+    }
 }
 

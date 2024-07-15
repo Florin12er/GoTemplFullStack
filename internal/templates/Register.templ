@@ -1,0 +1,49 @@
+package templates
+
+templ Register() {
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Register</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="static/javascripts/htmx.min.js"></script>
+    <link rel="stylesheet" href="static/styles/style.css" />
+</head>
+
+<body>
+    <form hx-post="/register" hx-target="#response-div" hx-indicator="#loading">
+        <div class="text-center text-3xl">
+            <h1>Register</h1>
+        </div>
+        <div>
+            <label for="fullname">Your full name</label>
+            <input id="fullname" name="fullname" type="text" required />
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" required hx-post="/check-username" hx-trigger="blur"
+                hx-target="#username-error" />
+            <div id="username-error"></div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required />
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Type password" name="password" required
+                hx-post="/check-password" hx-trigger="blur" hx-target="#password-error" />
+            <div id="password-error"></div>
+        </div>
+        <div>
+            <button type="submit">
+                Register
+            </button>
+        </div>
+        <div id="loading" class="htmx-indicator">Loading...</div>
+        <div id="response-div"></div>
+        <div>
+            <h2>Already have an account then Login here:</h2>
+            <a href="/login">Login</a>
+        </div>
+    </form>
+</body>
+
+</html>
+}

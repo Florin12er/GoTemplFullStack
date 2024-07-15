@@ -1,0 +1,33 @@
+package templates
+
+templ Users() {
+<div>
+    <div>
+        <a href="/profile">
+            Your Profile
+            <img src="user.profile-picture" alt="profile picture" />
+        </a>
+        <button id="menu inactive">Open Menu</button>
+    </div>
+    <div>
+        <dialog id="modal">
+            <form hx-post="/logout">
+                <a href="/settings">Settings</a>
+                <button type="submit">Logout</button>
+            </form>
+        </dialog>
+    </div>
+</div>
+<div>
+    <div>
+        <label for="user">Search User</label>
+        <input id="user" name="user" type="text" />
+    </div>
+    <div>
+    <img href="profile-image">
+    <p>username</p>
+    <p>Last coversation</p>
+    <p>Last time online</p>
+    </div>
+</div>
+}

@@ -10,14 +10,13 @@ import (
 	"GoMessageApp/internal/templates"
 	"GoMessageApp/internal/utils"
 	"context"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"github.com/gin-gonic/gin"
 )
 
 func init() {
-	// load the env file
-    utils.LoadEnv()
+	utils.LoadEnv()
 	database.ConnectToDb()
 	database.SyncDatabase()
 }
@@ -39,15 +38,25 @@ func main() {
 	//html rendering routes
 	r.GET("/", func(c *gin.Context) {
 		// Create the component
-		component := templates.Hello("John", "Berlin", "title")
+		component := templates.DashBoard("John", "Berlin")
 		// Render the component to the response writer and handle any potential errors
 		if err := component.Render(context.Background(), c.Writer); err != nil {
 			log.Printf("failed to render component: %v", err)
 			c.String(http.StatusInternalServerError, "Internal Server Error")
 		}
 	})
+	r.GET("/login", func(c *gin.Context) {
+		component := templates.Login()
+
+		if err := component.Render(context.Background(), c.Writer); err != nil {
+			log.Printf("failded to render component: %v", err)
+			c.String(http.StatusInternalServerError, "Internal Sever Error")
+		}
+	})
 	// Authenticate user
 	r.POST("/register", auth.Register)
+	r.POST("/check-username", auth.CheckUsername)
+	r.POST("/check-password", auth.CheckPassword)
 	r.POST("/login", auth.Login)
 	r.POST("/logout", middleware.RequireAuth, auth.Logout)
 	r.POST("/reset-request", auth.ResetRequest)

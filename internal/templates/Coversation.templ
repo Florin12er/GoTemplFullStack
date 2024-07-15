@@ -1,0 +1,44 @@
+package templates
+
+templ Coversation() {
+<div>
+    <a href="/receiver-profile">
+        open receiver Profile
+        <img href="user.profile-picture" alt="profile picture" />
+    </a>
+    <a href="/receiver-profile" name="username">username</a>
+    <p>Last time active</p>
+    <div>
+        <label for="message">Search Messages</label>
+        <input placeholder="search message" name="message" id="message" />
+    </div>
+</div>
+<div>
+    <div>
+        <dialog>
+            <form hx-delete="/message/:messageID">
+                <button type="submit">Delete</button>
+            </form>
+            <a>Edit Message</a>
+        </dialog>
+    </div>
+    <div>
+        <div>
+            <p>who made the massage</p>
+            <p>message sender</p>
+            <button>menu</button>
+        </div>
+        <div>
+            <p>Who made the message</p>
+            <p>message receiver</p>
+            <button>menu</button>
+        </div>
+    </div>
+</div>
+<div>
+    <label class="hidden" for="message"></label>
+    <input id="message" name="message" type="text" />
+    <label for="image">upload Image</label>
+    <input id="image" type="picture" name="image" />
+</div>
+}

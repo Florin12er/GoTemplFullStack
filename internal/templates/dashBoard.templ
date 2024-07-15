@@ -1,0 +1,21 @@
+package templates
+
+templ DashBoard(name string, address string) {
+
+<!DOCTYPE html>
+<head>
+    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="static/javascripts/htmx.min.js"></script>
+    <script src="static/javascripts/modal.js"></script>
+    <link rel="stylesheet" href="static/styles/style.css" />
+</head>
+
+<body>
+    <div class="text-3xl text-blue-600">Hello, { name }</div>
+    <h1>welcome to { address }</h1>
+    <button hx-get="/hello" hx-target="#message">Click Me</button>
+    <div id="message"></div>
+</body>
+}
