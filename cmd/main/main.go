@@ -8,20 +8,16 @@ import (
 	"GoMessageApp/internal/controllers/notification"
 	"GoMessageApp/internal/middleware"
 	"GoMessageApp/internal/templates"
+	"GoMessageApp/internal/utils"
 	"context"
 	"log"
 	"net/http"
-
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 func init() {
 	// load the env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+    utils.LoadEnv()
 	database.ConnectToDb()
 	database.SyncDatabase()
 }
@@ -53,7 +49,8 @@ func main() {
 	// Authenticate user
 	r.POST("/register", auth.Register)
 	r.POST("/login", auth.Login)
-    r.POST("/reset-request", auth.ResetRequest)
+	r.POST("/logout", middleware.RequireAuth, auth.Logout)
+	r.POST("/reset-request", auth.ResetRequest)
 	r.POST("/reset-password", auth.ResetPassword)
 	r.GET("/user", middleware.RequireAuth, auth.GetUser)
 	r.GET("/user/all", middleware.RequireAuth, auth.GetAllUsers)
