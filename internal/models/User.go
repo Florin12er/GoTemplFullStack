@@ -18,5 +18,5 @@ type User struct {
 	Password       string         `gorm:"not null"`
 	ProfilePicture string
 	Messages       []Message `gorm:"foreignKey:SenderID"`
+	Description    string
 }
-

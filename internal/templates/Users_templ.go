@@ -10,9 +10,7 @@ package templates
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"GoMessageApp/internal/models"
-)
+import "GoMessageApp/internal/models"
 
 func Users(currentUser models.User, users []models.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -32,20 +30,20 @@ func Users(currentUser models.User, users []models.User) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex h-screen bg-gray-100 text-white overflow-hidden\"><div class=\"w-1/4 bg-gray-800 border-r border-gray-700 flex flex-col\"><div class=\"p-4 bg-gray-800\"><div class=\"flex justify-between items-center mb-4\"><a href=\"/profile\" class=\"text-gray-300 hover:text-white\"><img src=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex h-screen bg-gray-100 text-white overflow-hidden\"><div id=\"user-sidebar\" class=\"w-1/4 bg-gray-800 border-r border-gray-700 flex flex-col relative\"><div class=\"p-4 bg-gray-800\"><div class=\"flex justify-between items-center mb-4\"><button id=\"profile-trigger\" hx-get=\"/profile-content\" hx-target=\"#profile-slide\" hx-swap=\"innerHTML\" class=\"text-gray-300 hover:text-white\"><img src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(currentUser.ProfilePicture)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Users.templ`, Line: 14, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Users.templ`, Line: 13, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" alt=\"Your profile\" class=\"w-10 h-10 rounded-full\"></a> <button id=\"menuButton\" class=\"text-gray-300 hover:text-white\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16m-7 6h7\"></path></svg></button></div><div class=\"relative\"><input type=\"text\" placeholder=\"Search users\" class=\"w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-full py-2 px-4 pl-10 focus:outline-none focus:border-blue-500\" hx-post=\"/search-users\" hx-trigger=\"keyup changed delay:100ms\" name=\"user\" hx-target=\"#users-list\"><div class=\"absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none\"><svg class=\"h-5 w-5 text-gray-400\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z\" clip-rule=\"evenodd\"></path></svg></div></div></div><div id=\"users-list\" class=\"flex-1 overflow-y-auto custom-scrollbar\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" alt=\"Your profile\" class=\"w-10 h-10 rounded-full\"></button> <button id=\"menuButton\" class=\"text-gray-300 hover:text-white\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-6 w-6\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 6h16M4 12h16m-7 6h7\"></path></svg></button></div><div class=\"relative\"><input type=\"text\" placeholder=\"Search users\" class=\"w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-full py-2 px-4 pl-10 focus:outline-none focus:border-blue-500\" hx-post=\"/search-users\" hx-trigger=\"keyup changed delay:100ms\" name=\"user\" hx-target=\"#users-list\"><div class=\"absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none\"><svg class=\"h-5 w-5 text-gray-400\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z\" clip-rule=\"evenodd\"></path></svg></div></div></div><div id=\"users-list\" class=\"flex-1 overflow-y-auto custom-scrollbar\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -53,7 +51,7 @@ func Users(currentUser models.User, users []models.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div id=\"conversation-container\" class=\"flex-1 bg-gray-100 flex flex-col\"><h1 class=\"text-2xl font-bold text-gray-200 p-6\">Select a user to start chatting</h1></div></div><style>\n        .custom-scrollbar::-webkit-scrollbar {\n            width: 6px;\n        }\n        .custom-scrollbar::-webkit-scrollbar-track {\n            background: transparent;\n        }\n        .custom-scrollbar::-webkit-scrollbar-thumb {\n            background-color: rgba(255, 255, 255, 0.2);\n            border-radius: 3px;\n        }\n    </style>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"profile-slide\" class=\"absolute inset-y-0 left-0 w-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out -translate-x-full\"><!-- Profile content will be loaded here --></div></div><div id=\"conversation-container\" class=\"flex-1 bg-gray-800 flex flex-col\"><h1 class=\"text-2xl font-bold text-white p-6\">Select a user to start chatting</h1></div></div><style>\n        .custom-scrollbar::-webkit-scrollbar {\n            width: 6px;\n        }\n\n        .custom-scrollbar::-webkit-scrollbar-track {\n            background: transparent;\n        }\n\n        .custom-scrollbar::-webkit-scrollbar-thumb {\n            background-color: rgba(255, 255, 255, 0.2);\n            border-radius: 3px;\n        }\n    </style><script>\n        document.addEventListener('htmx:load', function () {\n            const profileTrigger = document.getElementById('profile-trigger');\n            const profileSlide = document.getElementById('profile-slide');\n\n            if (profileTrigger && profileSlide) {\n                profileTrigger.addEventListener('click', function () {\n                    profileSlide.classList.remove('-translate-x-full');\n                });\n            }\n        });\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

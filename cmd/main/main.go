@@ -1,13 +1,13 @@
 package main
 
 import (
+	"GoMessageApp/cmd/main/websocket"
 	"GoMessageApp/internal/Database"
 	"GoMessageApp/internal/auth"
 	"GoMessageApp/internal/controllers/Message"
 	"GoMessageApp/internal/controllers/components"
 	"GoMessageApp/internal/controllers/content"
 	"GoMessageApp/internal/controllers/notification"
-    "GoMessageApp/cmd/main/websocket"
 	"GoMessageApp/internal/middleware"
 	"GoMessageApp/internal/templates"
 	"GoMessageApp/internal/utils"
@@ -79,16 +79,17 @@ func main() {
 	r.POST("/auth/logout", middleware.RequireAuth, auth.Logout)
 	r.POST("/auth/reset-request", auth.ResetRequest)
 	r.POST("/auth/reset-password", auth.ResetPassword)
-	r.GET("/auth/user", middleware.RequireAuth, auth.GetUser)
+	r.GET("/profile-content", middleware.RequireAuth, auth.GetUser)
 	r.GET("/auth/user/all", middleware.RequireAuth, auth.GetAllUsers)
 	r.POST("/search-users", middleware.RequireAuth, components.SearchUsers)
 	r.GET("/auth/user/:userID", middleware.RequireAuth, auth.GetUserByID)
-	r.PUT("/auth/user/profile", middleware.RequireAuth, auth.EditUserProfile)
+	r.PUT("/auth/user/profile", middleware.RequireAuth, auth.EditProfile)
 	r.DELETE("/auth/user/profile", middleware.RequireAuth, auth.DeleteUserProfile)
+	r.PUT("/auth/total/user/profile", middleware.RequireAuth, auth.EditUserProfile)
 
 	// Messages
 	r.POST("/auth/message", middleware.RequireAuth, message.SendMessage)
-    r.GET("/ws", middleware.RequireAuth, websocket.HandleWebSocket)
+	r.GET("/ws", middleware.RequireAuth, websocket.HandleWebSocket)
 	r.PUT("/auth/message/:messageID", middleware.RequireAuth, message.EditMessage)
 	r.DELETE("/auth/message/:messageID", middleware.RequireAuth, message.DeleteMessage)
 	r.GET("/conversation/:userID", middleware.RequireAuth, message.GetConversation)
