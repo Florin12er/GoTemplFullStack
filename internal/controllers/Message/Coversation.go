@@ -3,80 +3,78 @@ package message
 import (
 	"GoMessageApp/internal/Database"
 	"GoMessageApp/internal/models"
+	"GoMessageApp/internal/templates"
+	"context"
 	"net/http"
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 )
-
-// GetConversation retrieves all messages between two users
 func GetConversation(c *gin.Context) {
-    // Get the user from the context
-    userInterface, exists := c.Get("user")
-    if !exists {
-        c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
-        return
-    }
+    userInterface, _ := c.Get("user")
+    currentUser, _ := userInterface.(models.User)
 
-    user, ok := userInterface.(models.User)
-    if !ok {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user data"})
-        return
-    }
-
-    // Get the receiver ID from the URL parameter
-    receiverID, err := strconv.ParseUint(c.Param("receiverID"), 10, 32)
+    receiverID, err := strconv.ParseUint(c.Param("userID"), 10, 32)
     if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid receiver ID"})
+        templates.Error("Invalid user ID").Render(context.Background(), c.Writer)
+        return
+    }
+
+    var receiver models.User
+    if err := database.DB.First(&receiver, receiverID).Error; err != nil {
+        templates.Error("User not found").Render(context.Background(), c.Writer)
         return
     }
 
     var messages []models.Message
     if err := database.DB.Where(
         "(sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)",
-        user.ID, receiverID, receiverID, user.ID,
+        currentUser.ID, receiverID, receiverID, currentUser.ID,
     ).Order("created_at ASC").Find(&messages).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch conversation"})
+        templates.Error("Failed to fetch messages").Render(context.Background(), c.Writer)
         return
     }
 
-    c.JSON(http.StatusOK, gin.H{"messages": messages})
+    templates.Conversation(currentUser, receiver, messages).Render(context.Background(), c.Writer)
 }
+
 func GetAllConversations(c *gin.Context) {
-    // Get the user from the context
-    userInterface, exists := c.Get("user")
-    if !exists {
-        c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
-        return
-    }
+	userInterface, _ := c.Get("user")
+	currentUser, _ := userInterface.(models.User)
 
-    user, ok := userInterface.(models.User)
-    if !ok {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user data"})
-        return
-    }
+	var conversations []templates.ConversationPreview
 
-    var conversations []struct {
-        UserID   uint   `json:"userID"`
-        UserName string `json:"userName"`
-    }
-
-    // Query to get all unique conversations
-    query := `
-        SELECT DISTINCT
+	// Query to get all unique conversations with last message
+	query := `
+        SELECT 
             CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END AS user_id,
-            CASE WHEN sender_id = ? THEN receiver.user_name ELSE sender.user_name END AS user_name
-        FROM messages
-        JOIN users AS sender ON sender.id = messages.sender_id
-        JOIN users AS receiver ON receiver.id = messages.receiver_id
-        WHERE sender_id = ? OR receiver_id = ?
+            CASE WHEN sender_id = ? THEN receiver.user_name ELSE sender.user_name END AS user_name,
+            m.text AS last_message,
+            m.created_at AS last_message_time
+        FROM messages m
+        JOIN users AS sender ON sender.id = m.sender_id
+        JOIN users AS receiver ON receiver.id = m.receiver_id
+        INNER JOIN (
+            SELECT 
+                CASE WHEN sender_id = ? THEN receiver_id ELSE sender_id END AS user_id,
+                MAX(created_at) AS max_created_at
+            FROM messages
+            WHERE sender_id = ? OR receiver_id = ?
+            GROUP BY user_id
+        ) latest ON (latest.user_id = CASE WHEN m.sender_id = ? THEN m.receiver_id ELSE m.sender_id END)
+            AND m.created_at = latest.max_created_at
+        WHERE m.sender_id = ? OR m.receiver_id = ?
+        ORDER BY m.created_at DESC
     `
 
-    if err := database.DB.Raw(query, user.ID, user.ID, user.ID, user.ID).Scan(&conversations).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch conversations"})
-        return
-    }
+	if err := database.DB.Raw(query, currentUser.ID, currentUser.ID, currentUser.ID, currentUser.ID, currentUser.ID, currentUser.ID, currentUser.ID, currentUser.ID).Scan(&conversations).Error; err != nil {
+		c.HTML(
+			http.StatusInternalServerError,
+			"error.html",
+			gin.H{"error": "Failed to fetch conversations"},
+		)
+		return
+	}
 
-    c.JSON(http.StatusOK, gin.H{"conversations": conversations})
+	templates.ConversationsList(conversations).Render(context.Background(), c.Writer)
 }
-
-

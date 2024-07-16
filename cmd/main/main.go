@@ -3,16 +3,18 @@ package main
 import (
 	"GoMessageApp/internal/Database"
 	"GoMessageApp/internal/auth"
-	"GoMessageApp/internal/controllers"
 	"GoMessageApp/internal/controllers/Message"
+	"GoMessageApp/internal/controllers/components"
+	"GoMessageApp/internal/controllers/content"
 	"GoMessageApp/internal/controllers/notification"
 	"GoMessageApp/internal/middleware"
 	"GoMessageApp/internal/templates"
 	"GoMessageApp/internal/utils"
 	"context"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func init() {
@@ -36,16 +38,8 @@ func main() {
 	r.Static("/uploads", "./uploads")
 
 	//html rendering routes
-	r.GET("/", middleware.RequireAuth,func(c *gin.Context) {
-		// Create the component
-		component := templates.DashBoard("John", "Berlin")
-		// Render the component to the response writer and handle any potential errors
-		if err := component.Render(context.Background(), c.Writer); err != nil {
-			log.Printf("failed to render component: %v", err)
-			c.String(http.StatusInternalServerError, "Internal Server Error")
-		}
-	})
-	r.GET("/login",middleware.RedirectIfAuthenticated(), func(c *gin.Context) {
+	r.GET("/", middleware.RequireAuth, content.DashboardHandler)
+	r.GET("/login", middleware.RedirectIfAuthenticated(), func(c *gin.Context) {
 		component := templates.Login()
 
 		if err := component.Render(context.Background(), c.Writer); err != nil {
@@ -53,7 +47,7 @@ func main() {
 			c.String(http.StatusInternalServerError, "Internal Sever Error")
 		}
 	})
-	r.GET("/register", middleware.RedirectIfAuthenticated(),func(c *gin.Context) {
+	r.GET("/register", middleware.RedirectIfAuthenticated(), func(c *gin.Context) {
 		component := templates.Register()
 
 		if err := component.Render(context.Background(), c.Writer); err != nil {
@@ -61,7 +55,7 @@ func main() {
 			c.String(http.StatusInternalServerError, "Internal Sever Error")
 		}
 	})
-	r.GET("/reset-request",middleware.RedirectIfAuthenticated() ,func(c *gin.Context) {
+	r.GET("/reset-request", middleware.RedirectIfAuthenticated(), func(c *gin.Context) {
 		component := templates.ResetRequest()
 
 		if err := component.Render(context.Background(), c.Writer); err != nil {
@@ -69,7 +63,7 @@ func main() {
 			c.String(http.StatusInternalServerError, "Internal Sever Error")
 		}
 	})
-	r.GET("/reset-password",middleware.RedirectIfAuthenticated(), func(c *gin.Context) {
+	r.GET("/reset-password", middleware.RedirectIfAuthenticated(), func(c *gin.Context) {
 		component := templates.ResetPassword()
 
 		if err := component.Render(context.Background(), c.Writer); err != nil {
@@ -86,6 +80,7 @@ func main() {
 	r.POST("/auth/reset-password", auth.ResetPassword)
 	r.GET("/auth/user", middleware.RequireAuth, auth.GetUser)
 	r.GET("/auth/user/all", middleware.RequireAuth, auth.GetAllUsers)
+	r.POST("/search-users", middleware.RequireAuth, components.SearchUsers)
 	r.GET("/auth/user/:userID", middleware.RequireAuth, auth.GetUserByID)
 	r.PUT("/auth/user/profile", middleware.RequireAuth, auth.EditUserProfile)
 	r.DELETE("/auth/user/profile", middleware.RequireAuth, auth.DeleteUserProfile)
@@ -94,8 +89,8 @@ func main() {
 	r.POST("/auth/message", middleware.RequireAuth, message.SendMessage)
 	r.PUT("/auth/message/:messageID", middleware.RequireAuth, message.EditMessage)
 	r.DELETE("/auth/message/:messageID", middleware.RequireAuth, message.DeleteMessage)
-	r.GET("/auth/conversation/:receiverID", middleware.RequireAuth, message.GetConversation)
-	r.GET("/auth/conversations", middleware.RequireAuth, message.GetAllConversations)
+	r.GET("/conversation/:userID", middleware.RequireAuth, message.GetConversation)
+	r.GET("/conversations", middleware.RequireAuth, message.GetAllConversations)
 
 	// Notification
 
@@ -115,9 +110,6 @@ func main() {
 		middleware.RequireAuth,
 		message.UploadMessagePicture,
 	)
-
-	// function routes
-	r.GET("/hello", controllers.HelloHandler)
 
 	// Run the server on the specified port
 	if err := r.Run(); err != nil {

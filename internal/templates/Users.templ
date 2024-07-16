@@ -1,32 +1,60 @@
+// templates/users.templ
 package templates
 
-templ Users() {
-    <div class="container">
-        <div class="header">
-            <a href="/profile" class="profile-link">
-                Your Profile
-                <img src={user.ProfilePicture} alt="Your profile picture" />
-            </a>
-            <button id="menuButton" hx-get="/menu" hx-target="#modal" hx-swap="innerHTML">Open Menu</button>
+import (
+    "GoMessageApp/internal/models"
+)
+
+templ Users(currentUser models.User, users []models.User) {
+    <div class="flex h-screen bg-gray-100 text-white overflow-hidden">
+        <div class="w-1/4 bg-gray-800 border-r border-gray-700 flex flex-col">
+            <div class="p-4 bg-gray-800">
+                <div class="flex justify-between items-center mb-4">
+                    <a href="/profile" class="text-gray-300 hover:text-white">
+                        <img src={currentUser.ProfilePicture} alt="Your profile" class="w-10 h-10 rounded-full"/>
+                    </a>
+                    <button id="menuButton" class="text-gray-300 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        placeholder="Search users" 
+                        class="w-full bg-gray-700 text-gray-200 border border-gray-600 rounded-full py-2 px-4 pl-10 focus:outline-none focus:border-blue-500"
+                        hx-post="/search-users" 
+                        hx-trigger="keyup changed delay:100ms" 
+                        name="user"
+                        hx-target="#users-list"
+                    />
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div id="users-list" class="flex-1 overflow-y-auto custom-scrollbar">
+                @UsersList(users)
+            </div>
         </div>
-        <div id="modal" class="modal">
-            <!-- Modal content will be loaded here -->
-        </div>
-        <div class="search-bar">
-            <label for="user">Search User</label>
-            <input id="user" name="user" type="text" hx-post="/search-users" hx-trigger="keyup changed delay:500ms" hx-target="#users-list" />
-        </div>
-        <div id="users-list" hx-get="/users" hx-trigger="load">
-            <!-- UsersList component will be loaded here -->
-        </div>
-        <div id="user-details">
-            <!-- Selected user details will be loaded here -->
+        <div id="conversation-container" class="flex-1 bg-gray-100 flex flex-col">
+            <h1 class="text-2xl font-bold text-gray-200 p-6">Select a user to start chatting</h1>
         </div>
     </div>
-    <script>
-        document.getElementById('menuButton').addEventListener('click', function() {
-            document.getElementById('modal').showModal();
-        });
-    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+    </style>
 }
 

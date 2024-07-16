@@ -1,3 +1,4 @@
+// templates/users_list.templ
 package templates
 
 import (
@@ -6,12 +7,26 @@ import (
 )
 
 templ UsersList(users []models.User) {
-<div class="users-list">
-    for _, user := range users {
-    <div class="user-item" hx-get={ "/user/" + fmt.Sprint(user.ID) } hx-target="#user-details">
-        <img src={ user.ProfilePicture } alt={ user.UserName + "'s profile picture" } class="profile-picture" />
-        <p class="username">{ user.UserName }</p>
+if len(users) == 0 {
+<div class="p-4 text-gray-400 text-center">
+    No users found
+</div>
+} else {
+for _, user := range users {
+<div class="user-item flex items-center p-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer" hx-get={
+    fmt.Sprintf("/conversation/%d", user.ID) } hx-target="#conversation-container" hx-trigger="click">
+    if user.ProfilePicture != "" {
+    <img src={ user.ProfilePicture } alt={ user.UserName + "'s profile picture" } class="w-12 h-12 rounded-full mr-3" />
+    } else {
+    <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center mr-3">
+        <span class="text-xl text-white">{ string(user.UserName[0]) }</span>
     </div>
     }
+    <div>
+        <p class="text-gray-200 font-semibold">{ user.UserName }</p>
+        <p class="text-gray-400 text-sm">{ user.FullName }</p>
+    </div>
 </div>
+}
+}
 }

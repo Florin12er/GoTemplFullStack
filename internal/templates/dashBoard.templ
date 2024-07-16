@@ -1,21 +1,27 @@
+// dashboard.templ
 package templates
 
-templ DashBoard(name string, address string) {
+import "GoMessageApp/internal/models"
 
-<!DOCTYPE html>
-<head>
-    <title>Document</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="static/javascripts/htmx.min.js"></script>
-    <script src="static/javascripts/modal.js"></script>
-    <link rel="stylesheet" href="static/styles/style.css" />
-</head>
-
-<body>
-    <div class="text-3xl text-blue-600">Hello, { name }</div>
-    <h1>welcome to { address }</h1>
-    <button hx-get="/hello" hx-target="#message">Click Me</button>
-    <div id="message"></div>
-</body>
+templ DashBoard(currentUser models.User, users []models.User) {
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>Dashboard</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+        <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
+        <script src="static/javascripts/modal.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="static/styles/style.css" />
+    </head>
+    <body class="bg-gray-900 h-full text-white">
+                @Users(currentUser, users)
+        <script>
+            // Any additional JavaScript can go here
+        </script>
+    </body>
+    </html>
 }
+

@@ -1,44 +1,64 @@
+// templates/conversation.templ
 package templates
 
-templ Coversation() {
-<div>
-    <a href="/receiver-profile">
-        open receiver Profile
-        <img href="user.profile-picture" alt="profile picture" />
-    </a>
-    <a href="/receiver-profile" name="username">username</a>
-    <p>Last time active</p>
-    <div>
-        <label for="message">Search Messages</label>
-        <input placeholder="search message" name="message" id="message" />
-    </div>
-</div>
-<div>
-    <div>
-        <dialog>
-            <form hx-delete="/message/:messageID">
-                <button type="submit">Delete</button>
-            </form>
-            <a>Edit Message</a>
-        </dialog>
-    </div>
-    <div>
+import (
+"GoMessageApp/internal/models"
+"fmt"
+"time"
+)
+
+templ Conversation(currentUser models.User, receiver models.User, messages []models.Message) {
+<div class="flex flex-col h-full bg-gray-800 text-white">
+    <div class="flex items-center p-4 bg-gray-900 border-b border-gray-300">
+        <img src={ receiver.ProfilePicture } alt={ receiver.UserName + "'s profile picture" }
+            class="w-10 h-10 rounded-full mr-3" />
         <div>
-            <p>who made the massage</p>
-            <p>message sender</p>
-            <button>menu</button>
-        </div>
-        <div>
-            <p>Who made the message</p>
-            <p>message receiver</p>
-            <button>menu</button>
+            <h2 class="text-lg font-semibold">{ receiver.UserName }</h2>
+            <p class="text-sm text-gray-600">Last active: { time.Now().Format("15:04") }</p>
         </div>
     </div>
+    <div id="message-container" class="flex-grow overflow-y-auto p-4 space-y-2 custom-scrollbar">
+        for _, msg := range messages {
+        @SingleMessage(msg, msg.SenderID == currentUser.ID)
+        }
+    </div>
+    <div class="p-4 bg-gray-900 border-t border-gray-300">
+        <form hx-post="/auth/message" hx-target="#message-container" hx-swap="beforeend" class="flex space-x-2">
+            <input type="hidden" name="receiverId" value={ fmt.Sprint(receiver.ID) } />
+            <input type="text" name="text" placeholder="Type a message..."
+                class="flex-grow bg-gray-800 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
+            <button type="submit"
+                class="bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2">Send</button>
+        </form>
+    </div>
 </div>
-<div>
-    <label class="hidden" for="message"></label>
-    <input id="message" name="message" type="text" />
-    <label for="image">upload Image</label>
-    <input id="image" type="picture" name="image" />
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+    }
+</style>
+<script>
+    document.addEventListener('htmx:afterSettle', function (event) {
+        var messageContainer = document.getElementById('message-container');
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    });
+</script>
+}
+
+templ MessageItem(message models.Message, isSender bool) {
+<div class={ `flex ${isSender ? "justify-end" : "justify-start" }` }>
+    <div class={ `rounded-lg px-3 py-2 max-w-[70%] ${isSender ? "bg-gray-800" : "bg-green-200" }` }>
+        <p class="text-sm break-words">{ message.Text }</p>
+        <span class="text-xs text-gray-500 mt-1 block text-right">{ message.CreatedAt.Format("15:04") }</span>
+    </div>
 </div>
 }

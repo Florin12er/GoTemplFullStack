@@ -1,18 +1,16 @@
 package message
 
-import(
-"github.com/gin-gonic/gin"
-    "net/http"
-    "GoMessageApp/internal/models"
+import (
     "GoMessageApp/internal/Database"
+    "GoMessageApp/internal/models"
+    "GoMessageApp/internal/templates"
+    "context"
+    "net/http"
+    "strconv"
+
+    "github.com/gin-gonic/gin"
 )
 
-// SendMessage allows a user to send a message to another user
-
-type SendMessageRequest struct {
-	ReceiverID uint   `json:"receiverId" binding:"required"`
-	Text       string `json:"text" binding:"required"`
-}
 func SendMessage(c *gin.Context) {
     // Get the user from the context
     userInterface, exists := c.Get("user")
@@ -27,18 +25,24 @@ func SendMessage(c *gin.Context) {
         return
     }
 
-    // Parse the request body
-    var req SendMessageRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+    // Parse the form data
+    receiverID, err := strconv.ParseUint(c.PostForm("receiverId"), 10, 32)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid receiver ID"})
+        return
+    }
+
+    text := c.PostForm("text")
+    if text == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Message text is required"})
         return
     }
 
     // Create the message
     message := models.Message{
         SenderID:   user.ID,
-        ReceiverID: req.ReceiverID,
-        Text:       req.Text,
+        ReceiverID: uint(receiverID),
+        Text:       text,
     }
 
     // Save the message to the database
@@ -49,7 +53,7 @@ func SendMessage(c *gin.Context) {
 
     // Create a notification for the receiver
     notification := models.Notification{
-        UserID:    req.ReceiverID,
+        UserID:    uint(receiverID),
         MessageID: message.ID,
         SenderID:  user.ID,
         IsRead:    false,
@@ -61,20 +65,7 @@ func SendMessage(c *gin.Context) {
         return
     }
 
-    // Prepare the response
-    response := gin.H{
-        "message": "Message sent successfully",
-        "data": gin.H{
-            "id":         message.ID,
-            "senderID":   message.SenderID,
-            "receiverID": message.ReceiverID,
-            "text":       message.Text,
-            "createdAt":  message.CreatedAt,
-            "senderName": user.UserName,
-        },
-    }
-
-    c.JSON(http.StatusOK, response)
+    // Render the new message using a template
+    templates.SingleMessage(message, true).Render(context.Background(), c.Writer)
 }
-
 

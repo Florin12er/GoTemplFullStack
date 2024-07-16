@@ -1,0 +1,44 @@
+// templates/conversations_list.templ
+package templates
+
+import (
+    "fmt"
+    "time"
+)
+
+type ConversationPreview struct {
+    UserID      uint
+    UserName    string
+    LastMessage string
+    LastMessageTime time.Time
+}
+
+templ ConversationsList(conversations []ConversationPreview) {
+    <div class="conversations-list">
+        if len(conversations) == 0 {
+            <div class="p-4 text-gray-400 text-center">
+                No conversations yet
+            </div>
+        } else {
+            for _, conv := range conversations {
+                <div 
+                    class="conversation-item flex items-center p-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer"
+                    hx-get={fmt.Sprintf("/conversation/%d", conv.UserID)}
+                    hx-target="#conversation-container"
+                >
+                    <div class="w-12 h-12 rounded-full bg-gray-600 flex items-center justify-center mr-3">
+                        <span class="text-xl text-white">{string(conv.UserName[0])}</span>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="text-gray-200 font-semibold">{conv.UserName}</p>
+                        <p class="text-gray-400 text-sm truncate">{conv.LastMessage}</p>
+                    </div>
+                    <div class="text-gray-400 text-xs">
+                        {conv.LastMessageTime.Format("15:04")}
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+
