@@ -1,15 +1,17 @@
 package message
 
 import (
-    "GoMessageApp/internal/Database"
-    "GoMessageApp/internal/models"
-    "GoMessageApp/internal/templates"
-    "context"
-    "net/http"
-    "strconv"
+	"GoMessageApp/internal/Database"
+	"GoMessageApp/internal/models"
+	"GoMessageApp/internal/templates"
+    "GoMessageApp/cmd/main/websocket"
+	"context"
+	"net/http"
+	"strconv"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
+
 
 func SendMessage(c *gin.Context) {
     // Get the user from the context
@@ -64,6 +66,7 @@ func SendMessage(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create notification"})
         return
     }
+     go websocket.BroadcastMessage(message)
 
     // Render the new message using a template
     templates.SingleMessage(message, true).Render(context.Background(), c.Writer)

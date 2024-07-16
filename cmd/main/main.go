@@ -7,6 +7,7 @@ import (
 	"GoMessageApp/internal/controllers/components"
 	"GoMessageApp/internal/controllers/content"
 	"GoMessageApp/internal/controllers/notification"
+    "GoMessageApp/cmd/main/websocket"
 	"GoMessageApp/internal/middleware"
 	"GoMessageApp/internal/templates"
 	"GoMessageApp/internal/utils"
@@ -87,6 +88,7 @@ func main() {
 
 	// Messages
 	r.POST("/auth/message", middleware.RequireAuth, message.SendMessage)
+    r.GET("/ws", middleware.RequireAuth, websocket.HandleWebSocket)
 	r.PUT("/auth/message/:messageID", middleware.RequireAuth, message.EditMessage)
 	r.DELETE("/auth/message/:messageID", middleware.RequireAuth, message.DeleteMessage)
 	r.GET("/conversation/:userID", middleware.RequireAuth, message.GetConversation)

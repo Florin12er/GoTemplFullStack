@@ -4,24 +4,53 @@ package templates
 import "GoMessageApp/internal/models"
 
 templ DashBoard(currentUser models.User, users []models.User) {
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <title>Dashboard</title>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script src="https://unpkg.com/htmx.org@1.9.3"></script>
-        <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
-        <script src="static/javascripts/modal.js"></script>
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="static/styles/style.css" />
-    </head>
-    <body class="bg-gray-900 h-full text-white">
-                @Users(currentUser, users)
-        <script>
-            // Any additional JavaScript can go here
-        </script>
-    </body>
-    </html>
-}
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <title>Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
+    <script src="static/javascripts/modal.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="static/styles/style.css" />
+</head>
+
+<body class="bg-gray-900 h-full text-white">
+    @Users(currentUser, users)
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const socket = new WebSocket('ws://' + window.location.host + '/ws');
+
+            socket.onmessage = function (event) {
+                const message = JSON.parse(event.data);
+                if (message.type === 'new_message') {
+                    const messageContainer = document.getElementById('message-container');
+                    if (messageContainer) {
+                        // Render the new message
+                        const newMessageHtml = renderMessage(message.data);
+                        messageContainer.insertAdjacentHTML('beforeend', newMessageHtml);
+                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                    }
+                } else if (message.type === 'user_update') {
+                    // Update user list or status
+                    updateUserList(message.data);
+                }
+            };
+
+            function renderMessage(message) {
+                // Implement this function to render a message HTML
+                // You can use a client-side templating library or a simple string template
+            }
+
+            function updateUserList(user) {
+                // Implement this function to update the user list or user status
+            }
+        });
+    </script>
+</body>
+
+</html>
+}
