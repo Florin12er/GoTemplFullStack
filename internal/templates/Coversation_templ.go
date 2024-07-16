@@ -41,7 +41,7 @@ func Conversation(currentUser models.User, receiver models.User, messages []mode
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(receiver.ProfilePicture)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 13, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 13, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -54,7 +54,7 @@ func Conversation(currentUser models.User, receiver models.User, messages []mode
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(receiver.UserName + "'s profile picture")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 13, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 13, Col: 95}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -67,7 +67,7 @@ func Conversation(currentUser models.User, receiver models.User, messages []mode
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(receiver.UserName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 16, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 16, Col: 69}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -80,7 +80,7 @@ func Conversation(currentUser models.User, receiver models.User, messages []mode
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(time.Now().Format("15:04"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 17, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 17, Col: 90}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -96,20 +96,20 @@ func Conversation(currentUser models.User, receiver models.User, messages []mode
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"p-4 bg-gray-900 border-t border-gray-300\"><form hx-post=\"/auth/message\" hx-target=\"#message-container\" hx-swap=\"beforeend\" class=\"flex space-x-2\"><input type=\"hidden\" name=\"receiverId\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"p-4 bg-gray-900 border-t border-gray-300\"><form id=\"message-form\" hx-post=\"/auth/message\" hx-target=\"#message-container\" hx-swap=\"beforeend\" class=\"flex space-x-2\"><input type=\"hidden\" name=\"receiverId\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(receiver.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 27, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 27, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <input type=\"text\" name=\"text\" placeholder=\"Type a message...\" class=\"flex-grow bg-gray-800 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500\"> <button type=\"submit\" class=\"bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2\">Send</button></form></div></div><style>\n    .custom-scrollbar::-webkit-scrollbar {\n        width: 6px;\n    }\n\n    .custom-scrollbar::-webkit-scrollbar-track {\n        background: transparent;\n    }\n\n    .custom-scrollbar::-webkit-scrollbar-thumb {\n        background-color: rgba(0, 0, 0, 0.2);\n        border-radius: 3px;\n    }\n</style><script>\n    document.addEventListener('htmx:afterSettle', function (event) {\n        var messageContainer = document.getElementById('message-container');\n        messageContainer.scrollTop = messageContainer.scrollHeight;\n    });\n</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <input type=\"text\" id=\"message-input\" name=\"text\" placeholder=\"Type a message...\" class=\"flex-grow bg-gray-800 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500\"> <button type=\"submit\" class=\"bg-green-500 hover:bg-green-600 text-white rounded-full px-4 py-2\">Send</button></form></div></div><style>\n        .custom-scrollbar::-webkit-scrollbar {\n            width: 6px;\n        }\n\n        .custom-scrollbar::-webkit-scrollbar-track {\n            background: transparent;\n        }\n\n        .custom-scrollbar::-webkit-scrollbar-thumb {\n            background-color: rgba(0, 0, 0, 0.2);\n            border-radius: 3px;\n        }\n    </style><script>\n        document.addEventListener('htmx:afterSettle', function (event) {\n            var messageContainer = document.getElementById('message-container');\n            messageContainer.scrollTop = messageContainer.scrollHeight;\n        });\n\n        document.getElementById('message-form').addEventListener('htmx:afterOnLoad', function(event) {\n            document.getElementById('message-input').value = '';\n        });\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -182,7 +182,7 @@ func MessageItem(message models.Message, isSender bool) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(message.Text)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 60, Col: 53}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 64, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -195,7 +195,7 @@ func MessageItem(message models.Message, isSender bool) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(message.CreatedAt.Format("15:04"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 61, Col: 101}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Coversation.templ`, Line: 65, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {

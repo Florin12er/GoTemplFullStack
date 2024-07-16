@@ -3,14 +3,21 @@ package templates
 
 import (
     "GoMessageApp/internal/models"
+    "time"
 )
 
 templ SingleMessage(message models.Message, isSender bool) {
-    <div class={`flex ${isSender ? "justify-end" : "justify-start"}`}>
-        <div class={`rounded-lg px-3 py-2 max-w-[70%] ${isSender ? "bg-gray-800" : "bg-green-200"}`}>
-            <p class="text-sm break-words text-white">{message.Text}</p>
-            <span class="text-xs text-gray-500 mt-1 block text-right">{message.CreatedAt.Format("15:04")}</span>
+    if message.ID != 0 && message.Text != "" {
+        <div class={`flex ${isSender ? "justify-end" : "justify-start"}`}>
+            <div class={`rounded-lg px-3 py-2 max-w-[70%] ${isSender ? "bg-gray-800" : "bg-green-200"}`}>
+                <p class="text-sm break-words text-white">{message.Text}</p>
+                <span class="text-xs text-gray-500 mt-1 block text-right">{formatTime(message.CreatedAt)}</span>
+            </div>
         </div>
-    </div>
+    }
+}
+
+func formatTime(t time.Time) string {
+    return t.Format("15:04")
 }
 

@@ -66,9 +66,17 @@ func SendMessage(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create notification"})
         return
     }
-     go websocket.BroadcastMessage(message)
+
+    go websocket.BroadcastMessage(message)
+
+    // Set the content type to text/html
+    c.Header("Content-Type", "text/html")
 
     // Render the new message using a template
-    templates.SingleMessage(message, true).Render(context.Background(), c.Writer)
+    err = templates.SingleMessage(message, true).Render(context.Background(), c.Writer)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render message"})
+        return
+    }
 }
 
