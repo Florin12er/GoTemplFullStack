@@ -15,7 +15,8 @@ import (
 func RequireAuth(c *gin.Context) {
 	tokenString, err := c.Cookie("Authorization")
 	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
+        c.Redirect(http.StatusSeeOther, "/login")
+		c.Abort()
 		return
 	}
 
@@ -78,4 +79,17 @@ func RequireAuth(c *gin.Context) {
 
 	c.Next()
 }
-
+func RedirectIfAuthenticated() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        // Check if the Authorization cookie exists
+        _, err := c.Cookie("Authorization")
+        if err == nil {
+            // User is authenticated, redirect to home page
+            c.Redirect(http.StatusSeeOther, "/")
+            c.Abort()
+            return
+        }
+        // User is not authenticated, continue to the next handler
+        c.Next()
+    }
+}

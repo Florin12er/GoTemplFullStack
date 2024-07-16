@@ -1,0 +1,17 @@
+package templates
+
+import (
+"GoMessageApp/internal/models"
+"fmt"
+)
+
+templ UsersList(users []models.User) {
+<div class="users-list">
+    for _, user := range users {
+    <div class="user-item" hx-get={ "/user/" + fmt.Sprint(user.ID) } hx-target="#user-details">
+        <img src={ user.ProfilePicture } alt={ user.UserName + "'s profile picture" } class="profile-picture" />
+        <p class="username">{ user.UserName }</p>
+    </div>
+    }
+</div>
+}

@@ -26,7 +26,20 @@ func Users() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><div><a href=\"/profile\">Your Profile <img src=\"user.profile-picture\" alt=\"profile picture\"></a> <button id=\"menu inactive\">Open Menu</button></div><div><dialog id=\"modal\"><form hx-post=\"/logout\"><a href=\"/settings\">Settings</a> <button type=\"submit\">Logout</button></form></dialog></div></div><div><div><label for=\"user\">Search User</label> <input id=\"user\" name=\"user\" type=\"text\"></div><div><img href=\"profile-image\"><p>username</p><p>Last coversation</p><p>Last time online</p></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container\"><div class=\"header\"><a href=\"/profile\" class=\"profile-link\">Your Profile <img src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(user.ProfilePicture)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/Users.templ`, Line: 8, Col: 45}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" alt=\"Your profile picture\"></a> <button id=\"menuButton\" hx-get=\"/menu\" hx-target=\"#modal\" hx-swap=\"innerHTML\">Open Menu</button></div><div id=\"modal\" class=\"modal\"><!-- Modal content will be loaded here --></div><div class=\"search-bar\"><label for=\"user\">Search User</label> <input id=\"user\" name=\"user\" type=\"text\" hx-post=\"/search-users\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#users-list\"></div><div id=\"users-list\" hx-get=\"/users\" hx-trigger=\"load\"><!-- UsersList component will be loaded here --></div><div id=\"user-details\"><!-- Selected user details will be loaded here --></div></div><script>\n        document.getElementById('menuButton').addEventListener('click', function() {\n            document.getElementById('modal').showModal();\n        });\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -36,7 +36,7 @@ func main() {
 	r.Static("/uploads", "./uploads")
 
 	//html rendering routes
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/", middleware.RequireAuth,func(c *gin.Context) {
 		// Create the component
 		component := templates.DashBoard("John", "Berlin")
 		// Render the component to the response writer and handle any potential errors
@@ -45,7 +45,7 @@ func main() {
 			c.String(http.StatusInternalServerError, "Internal Server Error")
 		}
 	})
-	r.GET("/login", func(c *gin.Context) {
+	r.GET("/login",middleware.RedirectIfAuthenticated(), func(c *gin.Context) {
 		component := templates.Login()
 
 		if err := component.Render(context.Background(), c.Writer); err != nil {
@@ -53,7 +53,7 @@ func main() {
 			c.String(http.StatusInternalServerError, "Internal Sever Error")
 		}
 	})
-	r.GET("/register", func(c *gin.Context) {
+	r.GET("/register", middleware.RedirectIfAuthenticated(),func(c *gin.Context) {
 		component := templates.Register()
 
 		if err := component.Render(context.Background(), c.Writer); err != nil {
@@ -61,7 +61,7 @@ func main() {
 			c.String(http.StatusInternalServerError, "Internal Sever Error")
 		}
 	})
-	r.GET("/reset-request", func(c *gin.Context) {
+	r.GET("/reset-request",middleware.RedirectIfAuthenticated() ,func(c *gin.Context) {
 		component := templates.ResetRequest()
 
 		if err := component.Render(context.Background(), c.Writer); err != nil {
@@ -69,7 +69,7 @@ func main() {
 			c.String(http.StatusInternalServerError, "Internal Sever Error")
 		}
 	})
-	r.GET("/reset-password", func(c *gin.Context) {
+	r.GET("/reset-password",middleware.RedirectIfAuthenticated(), func(c *gin.Context) {
 		component := templates.ResetPassword()
 
 		if err := component.Render(context.Background(), c.Writer); err != nil {
