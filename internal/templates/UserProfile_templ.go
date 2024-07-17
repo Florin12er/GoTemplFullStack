@@ -81,7 +81,7 @@ func UserProfileContent(user models.User) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<label for=\"profile-picture-upload\" class=\"absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-2 cursor-pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 13a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg></label> <input id=\"profile-picture-upload\" name=\"profilePicture\" type=\"file\" accept=\"image/*\" class=\"hidden\"></div></div><div class=\"mt-2 flex justify-center\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<label for=\"profile-picture-upload\" class=\"absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-2 cursor-pointer\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-5 w-5\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z\"></path> <path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 13a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg></label> <input id=\"profile-picture-upload\" name=\"profilePicture\" type=\"file\" accept=\"image/*\" class=\"hidden\" hx-post=\"/auth/user/profile-picture\" hx-target=\"#profile-slide\" hx-swap=\"innerHTML\" hx-encoding=\"multipart/form-data\"><div id=\"upload-progress\" class=\"hidden absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center\"><div class=\"bg-white text-black px-4 py-2 rounded\">Uploading...</div></div></div></div><div class=\"mt-2 flex justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -98,7 +98,7 @@ func UserProfileContent(user models.User) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(user.UserName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/UserProfile.templ`, Line: 59, Col: 66}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/UserProfile.templ`, Line: 65, Col: 66}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -111,7 +111,7 @@ func UserProfileContent(user models.User) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(user.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/UserProfile.templ`, Line: 60, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/UserProfile.templ`, Line: 66, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -124,7 +124,7 @@ func UserProfileContent(user models.User) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(user.UserName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/UserProfile.templ`, Line: 70, Col: 86}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/UserProfile.templ`, Line: 76, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -138,13 +138,13 @@ func UserProfileContent(user models.User) templ.Component {
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(
 			user.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/UserProfile.templ`, Line: 78, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/UserProfile.templ`, Line: 83, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</textarea></div><div class=\"flex justify-between\"><button type=\"button\" id=\"cancel-edit\" class=\"bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out\">Cancel</button> <button type=\"submit\" class=\"bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out\">Save Changes</button></div></form></div></div><script>\n    document.getElementById('close-profile').addEventListener('click', function () {\n        document.getElementById('profile-slide').classList.add('-translate-x-full');\n    });\n\n    document.getElementById('edit-profile-btn').addEventListener('click', function () {\n        document.getElementById('profile-info').classList.add('hidden');\n        document.getElementById('edit-profile-btn').classList.add('hidden');\n        document.getElementById('edit-profile-form').classList.remove('hidden');\n    });\n\n    document.getElementById('cancel-edit').addEventListener('click', function () {\n        document.getElementById('profile-info').classList.remove('hidden');\n        document.getElementById('edit-profile-btn').classList.remove('hidden');\n        document.getElementById('edit-profile-form').classList.add('hidden');\n    });\n\n    document.getElementById('profile-picture-upload').addEventListener('change', function () {\n        if (this.files && this.files[0]) {\n            var formData = new FormData();\n            formData.append('profilePicture', this.files[0]);\n            htmx.ajax('POST', '/auth/user/profile-picture', {\n                target: '#profile-slide',\n                swap: 'innerHTML',\n                enctype: 'multipart/form-data',\n                headers: {\n                    'X-HTMX-Request': 'true'\n                },\n                body: formData\n            }).then(function (response) {\n                console.log('Success:', response);\n            }).catch(function (error) {\n                console.error('Error:', error);\n            });\n        }\n    });\n\n</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</textarea></div><div class=\"flex justify-between\"><button type=\"button\" id=\"cancel-edit\" class=\"bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out\">Cancel</button> <button type=\"submit\" class=\"bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out\">Save Changes</button></div></form></div></div><script>\n    document.getElementById('close-profile').addEventListener('click', function () {\n        document.getElementById('profile-slide').classList.add('-translate-x-full');\n    });\n\n    document.getElementById('edit-profile-btn').addEventListener('click', function () {\n        document.getElementById('profile-info').classList.add('hidden');\n        document.getElementById('edit-profile-btn').classList.add('hidden');\n        document.getElementById('edit-profile-form').classList.remove('hidden');\n    });\n\n    document.getElementById('cancel-edit').addEventListener('click', function () {\n        document.getElementById('profile-info').classList.remove('hidden');\n        document.getElementById('edit-profile-btn').classList.remove('hidden');\n        document.getElementById('edit-profile-form').classList.add('hidden');\n    });\n\n    document.getElementById('profile-picture-upload').addEventListener('change', function () {\n        if (this.files && this.files[0]) {\n            var file = this.files[0];\n            var maxSize = 5 * 1024 * 1024; // 5MB\n\n            if (file.size > maxSize) {\n                alert('File is too large. Maximum size is 5MB.');\n                this.value = '';\n                return;\n            }\n\n            // Trigger the HTMX request manually\n            htmx.trigger('#profile-picture-upload', 'change');\n        }\n    });\n\n    htmx.on('htmx:afterRequest', function (evt) {\n        if (evt.detail.elt.id === 'profile-picture-upload') {\n            if (evt.detail.successful) {\n                console.log('Upload successful');\n            } else {\n                console.error('Upload failed');\n                alert('An error occurred during upload. Please try again.');\n            }\n        }\n    });\n\n    htmx.on('htmx:responseError', function (evt) {\n        console.error('HTMX response error:', evt.detail.error);\n        alert('An error occurred. Please try again.');\n    });\n\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

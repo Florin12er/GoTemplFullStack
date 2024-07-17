@@ -44,7 +44,13 @@ templ UserProfileContent(user models.User) {
                             d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
                 </label>
-                <input id="profile-picture-upload" name="profilePicture" type="file" accept="image/*" class="hidden" />
+                <input id="profile-picture-upload" name="profilePicture" type="file" accept="image/*" class="hidden"
+                    hx-post="/auth/user/profile-picture" hx-target="#profile-slide" hx-swap="innerHTML"
+                    hx-encoding="multipart/form-data" />
+                <div id="upload-progress"
+                    class="hidden absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div class="bg-white text-black px-4 py-2 rounded">Uploading...</div>
+                </div>
             </div>
         </div>
         <div class="mt-2 flex justify-center">
@@ -73,10 +79,8 @@ templ UserProfileContent(user models.User) {
             <div class="mb-4">
                 <label for="description" class="block text-sm font-medium text-gray-300 mb-1">About</label>
                 <textarea id="description" name="description" rows="3"
-                    class="w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    {
-                    user.Description }
-                </textarea>
+                    class="w-full px-3 py-2 bg-gray-700 text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">{
+                    user.Description }</textarea>
             </div>
             <div class="flex justify-between">
                 <button type="button" id="cancel-edit"
@@ -110,22 +114,34 @@ templ UserProfileContent(user models.User) {
 
     document.getElementById('profile-picture-upload').addEventListener('change', function () {
         if (this.files && this.files[0]) {
-            var formData = new FormData();
-            formData.append('profilePicture', this.files[0]);
-            htmx.ajax('POST', '/auth/user/profile-picture', {
-                target: '#profile-slide',
-                swap: 'innerHTML',
-                enctype: 'multipart/form-data',
-                headers: {
-                    'X-HTMX-Request': 'true'
-                },
-                body: formData
-            }).then(function (response) {
-                console.log('Success:', response);
-            }).catch(function (error) {
-                console.error('Error:', error);
-            });
+            var file = this.files[0];
+            var maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (file.size > maxSize) {
+                alert('File is too large. Maximum size is 5MB.');
+                this.value = '';
+                return;
+            }
+
+            // Trigger the HTMX request manually
+            htmx.trigger('#profile-picture-upload', 'change');
         }
+    });
+
+    htmx.on('htmx:afterRequest', function (evt) {
+        if (evt.detail.elt.id === 'profile-picture-upload') {
+            if (evt.detail.successful) {
+                console.log('Upload successful');
+            } else {
+                console.error('Upload failed');
+                alert('An error occurred during upload. Please try again.');
+            }
+        }
+    });
+
+    htmx.on('htmx:responseError', function (evt) {
+        console.error('HTMX response error:', evt.detail.error);
+        alert('An error occurred. Please try again.');
     });
 
 </script>
